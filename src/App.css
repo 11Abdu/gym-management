@@ -1,0 +1,11 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem 2rem; /* top, right, bottom, left */
+  text-align: center;
+}
+
+.app-main-container {
+  margin-right: 2rem;
+  margin-bottom: 2rem;
+}

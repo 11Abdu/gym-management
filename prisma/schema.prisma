@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id            Int      @id @default(autoincrement())
+  memberId      String   @unique
+  firstName     String
+  lastName      String
+  email         String   @unique
+  phone         String?
+  address       String?
+  dateOfBirth   DateTime?
+  gender        String?
+  emergencyName String?
+  emergencyPhone String?
+  emergencyRelationship String?
+  planId        Int?
+  plan          Plan?    @relation(fields: [planId], references: [id])
+  joinDate      DateTime?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  checkIns      CheckIn[]
+
+  // Added fields for full member data
+  membershipDuration Int?
+  membershipPlan     String?
+  membershipPrice    Float?
+  startDate         DateTime?
+  endDate           DateTime?
+  qrCode            String?
+  photo             String?
+  notes             String?
+  lastCheckIn       DateTime?
+  status            String?  // for active/expired, etc.
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  isActive  Boolean  @default(true)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  plans     Plan[]
+}
+
+model Plan {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  duration    Int
+  price       Float
+  isPopular   Boolean  @default(false)
+  description String
+  isActive    Boolean  @default(true)
+  createdById Int?
+  createdBy   Admin?   @relation(fields: [createdById], references: [id])
+  members     Member[]
+  features    Feature[]
+}
+
+model Feature {
+  id      Int    @id @default(autoincrement())
+  name    String
+  planId  Int
+  plan    Plan   @relation(fields: [planId], references: [id])
+}
+
+model CheckIn {
+  id          Int      @id @default(autoincrement())
+  memberId    Int
+  member      Member   @relation(fields: [memberId], references: [id])
+  checkInTime DateTime @default(now())
+  checkOutTime DateTime?
+  date        DateTime
+  duration    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
